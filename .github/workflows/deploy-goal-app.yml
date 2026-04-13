@@ -1,0 +1,139 @@
+name: Deploy backend and frontend to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/deploy-goal-app.yml'
+  workflow_dispatch:
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm install
+
+      - name: Run backend build if present
+        run: npm run build --if-present
+
+      - name: Run backend tests if present
+        run: npm run test --if-present
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-app
+          path: backend
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: build-backend
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-app
+          path: backend
+
+      - name: Azure login for backend
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4877F0C8A5864236B2E42E50C58D4F03 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7DFDE2F2234D4900970F7D6FDA864E79 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2A00F6EEB0524FA3A5362E4FEFF632D7 }}
+
+      - name: Deploy backend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'goal-app-backend'
+          slot-name: 'Production'
+          package: backend
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Run frontend tests if present
+        run: npm run test --if-present
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-app
+          path: frontend
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-app
+          path: frontend
+
+      - name: Azure login for frontend
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2A348323C0F3423DAFF1C7CE35E13392 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B018471636884931A1F89E4D7D135559 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E4B5577AE2A14FFC9221007D62D1BC23 }}
+
+      - name: Deploy frontend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'goal-app-frontend'
+          slot-name: 'Production'
+          package: frontend
