@@ -1,0 +1,36 @@
+
+services:
+    backend:
+        container_name: backend
+        ports:
+            - 80:80
+        volumes:
+            - logs:/logs
+        networks:
+            - react-net
+        image: svdimov85/backend
+    frontend:
+        container_name: frontend
+        ports:
+            - 3000:3000
+        volumes:
+            - data:/data/db
+        networks:
+            - react-net
+        image: svdimov85/frontend
+    mongo:
+        container_name: mongodb
+        networks:
+            - react-net
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+            - MONGO_INITDB_ROOT_PASSWORD=secret
+        image: mongo
+networks:
+    react-net:
+        
+volumes:
+    logs:
+        
+    data:
+        
