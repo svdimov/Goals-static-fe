@@ -85,7 +85,10 @@ app.delete('/goals/:id', async (req, res) => {
 
 const mongoUri = process.env.MONGO_URI;
 
-mongoose.connect(mongoUri)
+mongoose.connect(mongoUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => {
     console.log('CONNECTED TO MONGODB!!');
     app.listen(process.env.PORT || 3000);
