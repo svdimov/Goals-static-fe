@@ -83,7 +83,7 @@ app.delete('/goals/:id', async (req, res) => {
   }
 });
 
-const mongoose = require('mongoose');
+
 
 const uri = 'mongodb://dimov85-cosmosdb-account.mongo.cosmos.azure.com:10255/course-goals?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&authSource=admin';
 
@@ -101,3 +101,11 @@ mongoose.connect(uri, {
   console.error('FAILED TO CONNECT TO MONGODB');
   console.error(err);
 });
+
+
+if (process.env.NODE_ENV !== 'production') {
+  console.log('BACKEND VERSION CHECK');
+  console.log('URI EXISTS:', !!uri);
+  console.log('MONGO_USER EXISTS:', !!process.env.MONGO_USER);
+  console.log('MONGO_PASS EXISTS:', !!process.env.MONGO_PASS);
+}
