@@ -14,7 +14,7 @@ function App() {
       setIsLoading(true);
 
       try {
-        const response = await fetch('http://localhost/goals');
+        const response = await fetch('https://goal-app-backend.azurewebsites.net/goals');
 
         const resData = await response.json();
 
