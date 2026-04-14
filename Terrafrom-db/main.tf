@@ -101,6 +101,6 @@ resource "azurerm_linux_web_app" "frontend" {
     WEBSITE_NODE_DEFAULT_VERSION   = "~20"
     SCM_DO_BUILD_DURING_DEPLOYMENT = "false"
     NODE_ENV                       = "production"
-    BACKEND_URL                    = "https://${azurerm_linux_web_app.backend.default_hostname}"
+    REACT_APP_BACKEND_URL          = "https://${azurerm_linux_web_app.backend.default_hostname}"
   }
 }

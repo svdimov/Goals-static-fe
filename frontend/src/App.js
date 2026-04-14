@@ -5,7 +5,7 @@ import CourseGoals from './components/goals/CourseGoals';
 import ErrorAlert from './components/UI/ErrorAlert';
 
 // 👉 централен URL
-const BASE_URL = 'https://goal-backend-app.azurewebsites.net';
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
   const [loadedGoals, setLoadedGoals] = useState([]);
