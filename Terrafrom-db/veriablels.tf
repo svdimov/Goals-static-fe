@@ -33,3 +33,19 @@ variable "azurerm_cosmosdb_mongo_password" {
   type        = string
 
 }
+
+variable "app_service_plan_name" {
+  description = "Name of the App Service Plan"
+  type        = string
+
+
+}
+variable "backend_app_name" {
+  description = "Name of the Backend Web App"
+  type        = string
+}
+
+variable "frontend_app_name" {
+  description = "Name of the Frontend Web App"
+  type        = string
+}
